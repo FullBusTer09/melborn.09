@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        #board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 5px;
+            margin: 20px;
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            font-size: 2em;
+            text-align: center;
+            border: 2px solid #333;
+            cursor: pointer;
+        }
+
+        .cell:hover {
+            background-color: #eee;
+        }
+    </style>
+</head>
+<body>
+
+<div id="board"></div>
+
+<script>
+    const board = document.getElementById('board');
+    let currentPlayer = 'X';
+    let gameOver = false;
+
+    // Create the initial game board
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.dataset.row = i;
+            cell.dataset.col = j;
+            cell.addEventListener('click', handleCellClick);
+            board.appendChild(cell);
+        }
+    }
+
+    function handleCellClick(event) {
+        if (gameOver) return;
+
+        const cell = event.target;
+
+        // Check if the cell is already marked
+        if (cell.textContent !== '') {
+            alert('Cell already marked. Choose an empty cell.');
+            return;
+        }
+
+        // Mark the cell with the current player's symbol
+        cell.textContent = currentPlayer;
+
+        // Check for a winner or a tie
+        if (checkForWinner()) {
+            alert(`Player ${currentPlayer} wins!`);
+            gameOver = true;
+        } else if (checkForTie()) {
+            alert('It\'s a tie!');
+            gameOver = true;
+        } else {
+            // Switch to the next player
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        }
+    }
+
+    function checkForWinner() {
+        const cells = document.getElementsByClassName('cell');
+
+        // Check rows, columns, and diagonals
+        for (let i = 0; i < 3; i++) {
+            if (checkLine(cells[i * 3], cells[i * 3 + 1], cells[i * 3 + 2]) ||
+                checkLine(cells[i], cells[i + 3], cells[i + 6])) {
+                return true;
+            }
+        }
+
+        if (checkLine(cells[0], cells[4], cells[8]) ||
+            checkLine(cells[2], cells[4], cells[6])) {
+            return true;
+        }
+
+        return false;
+    }
+
+    function checkLine(cell1, cell2, cell3) {
+        return cell1.textContent !== '' && cell1.textContent === cell2.textContent && cell2.textContent === cell3.textContent;
+    }
+
+    function checkForTie() {
+        const cells = document.getElementsByClassName('cell');
+        for (let i = 0; i < cells.length; i++) {
+            if (cells[i].textContent === '') {
+                return false;
+            }
+        }
+        return true;
+    }
+</script>
+
+</body>
+</html>
